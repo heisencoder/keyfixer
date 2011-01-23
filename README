@@ -8,6 +8,7 @@ Original keyfixer by Jim Mendenhall (http://www.starryhope.com)
 
 To build the .xpi, run this command:
 
+cd source
 ./build.sh
 
 
