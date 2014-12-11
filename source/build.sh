@@ -118,6 +118,9 @@ if [ -f "chrome.manifest" ]; then
   sed $SED_ARGS "s/^([[:space:]]*content[[:space:]]+)[^[:space:]]+([[:space:]]+jar:chrome\/)[^\.]+(\.jar.*)/\1${APP_NAME}\2${APP_NAME}\3/" chrome.manifest
   sed $SED_ARGS "s/^([[:space:]]*override[[:space:]]+[^[:space:]]+[[:space:]]+chrome:\/\/)[^\/]+(\/.*)/\1${APP_NAME}\2/g" chrome.manifest
   # I didn't re-write the (skin|locale) regex as it wasn't used in the chrome.manifest file.  Should be easy enough to figure it out though :)
+  if [ -e "chrome.manifest''" ]; then
+    rm "chrome.manifest''"
+  fi
 fi
 
 # generate the XPI file
