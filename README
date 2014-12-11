@@ -12,6 +12,14 @@ cd source
 ./build.sh
 
 
+When upgrading keyfixer to a new baseline version, copy platformHTMLBindings.xml
+using these commands:
+
+mkdir temp
+cd temp
+unzip /Applications/Firefox.app/Contents/Resources/omni.ja 
+cp chrome/toolkit/content/global/platformHTMLBindings.xml ..  # or wherever
+
 
 (Here is the original readme.txt from the extension generator)
 
