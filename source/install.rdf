@@ -4,9 +4,10 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>keyfixer@mavaball.net</em:id>
     <em:name>Keyfixer</em:name>
-    <em:version>0.5.29</em:version>
+    <em:version>0.5.30</em:version>
     <em:creator>Matthew V. Ball</em:creator>
     <em:contributor>Matthew V. Ball</em:contributor>
+    <em:contributor>Darren 'Tadgy' Austin</em:contributor>
     <em:description>Changes keyboard bindings for Mac OS X users to match Windows key bindings</em:description>
     <em:homepageURL>http://mavaball.net/wiki/index.php/Keyfixer</em:homepageURL>
     <em:iconURL>chrome://keyfixer/content/keyfixer.png</em:iconURL>

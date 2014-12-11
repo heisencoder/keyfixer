@@ -1,6 +1,7 @@
 #!/bin/bash
 # build.sh -- builds JAR and XPI files for mozilla extensions
 #   by Nickolay Ponomarev <asqueella@gmail.com>
+#   contibutions by Darren 'Tadgy' Austin <darren (at) afterdark.org.uk>
 #   (original version based on Nathan Yergler's build script)
 # Most recent version is at <http://kb.mozillazine.org/Bash_build_script>
 
@@ -44,10 +45,13 @@ else
   . $1
 fi
 
-if [ -z $APP_NAME ]; then
+if [ -z "$APP_NAME" ]; then
   echo "You need to create build config file first!"
   echo "Read comments at the beginning of this script for more info."
-  exit;
+  exit 1;
+elif [[ "$APP_NAME" =~ .*[[:upper:]]|\.|/|[[:space:]].* ]]; then
+  echo "App names must be all lowercase and can not contain . / or spaces."
+  exit 1
 fi
 
 ROOT_DIR=`pwd`
@@ -103,13 +107,17 @@ if [ -f "chrome.manifest" ]; then
   # Then try this! (Same, but with characters escaped for bash :)
 # These work for GNU sed (Linux, Cygwin)
 # Note from Matt:  For the life of me, I can't get this to work on Mac OS X, using BSD SED.  I made this change by hand...
-  sed -i -r s/^\(content\\s+\\S*\\s+\)\(\\S*\\/\)$/\\1jar:chrome\\/$APP_NAME\\.jar!\\/\\2/ chrome.manifest
-  sed -i -r s/^\(skin\|locale\)\(\\s+\\S*\\s+\\S*\\s+\)\(.*\\/\)$/\\1\\2jar:chrome\\/$APP_NAME\\.jar!\\/\\3/ chrome.manifest
+#  sed -i -r s/^\(content\\s+\\S*\\s+\)\(\\S*\\/\)$/\\1jar:chrome\\/$APP_NAME\\.jar!\\/\\2/ chrome.manifest
+#  sed -i -r s/^\(skin\|locale\)\(\\s+\\S*\\s+\\S*\\s+\)\(.*\\/\)$/\\1\\2jar:chrome\\/$APP_NAME\\.jar!\\/\\3/ chrome.manifest
 # Note from Matt: This is the closest I got, but it doesn't work...
 #  sed -E -e "s/^(content\\s+\\S*\\s+)(\\S*\\/)$/\\1jar:chrome\\/$APP_NAME\\.jar!\\/\\2/g" chrome.manifest
 #  sed -E -e "s/^(skin\|locale)(\\s+\\S*\\s+\\S*\\s+)(.*\\/)$/\\1\\2jar:chrome\\/$APP_NAME\\.jar!\\/\\3/g" chrome.manifest
-
-  # (it simply adds jar:chrome/whatever.jar!/ at appropriate positions of chrome.manifest)
+# Note from Darren: This should work on GNU sed as well as BSD sed.
+  SED_ARGS="-r -i"
+  [[ "$(uname -s)" =~ (Darwin|.*BSD) ]] && SED_ARGS="-E -i ''"
+  sed $SED_ARGS "s/^([[:space:]]*content[[:space:]]+)[^[:space:]]+([[:space:]]+jar:chrome\/)[^\.]+(\.jar.*)/\1${APP_NAME}\2${APP_NAME}\3/" chrome.manifest
+  sed $SED_ARGS "s/^([[:space:]]*override[[:space:]]+[^[:space:]]+[[:space:]]+chrome:\/\/)[^\/]+(\/.*)/\1${APP_NAME}\2/g" chrome.manifest
+  # I didn't re-write the (skin|locale) regex as it wasn't used in the chrome.manifest file.  Should be easy enough to figure it out though :)
 fi
 
 # generate the XPI file
@@ -127,7 +135,7 @@ else
 fi
 
 # remove the working files
-rm -rf $TMP_DIR
+#rm -rf $TMP_DIR
 echo "Done!"
 
 $AFTER_BUILD
