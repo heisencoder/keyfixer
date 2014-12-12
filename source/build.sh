@@ -113,14 +113,11 @@ if [ -f "chrome.manifest" ]; then
 #  sed -E -e "s/^(content\\s+\\S*\\s+)(\\S*\\/)$/\\1jar:chrome\\/$APP_NAME\\.jar!\\/\\2/g" chrome.manifest
 #  sed -E -e "s/^(skin\|locale)(\\s+\\S*\\s+\\S*\\s+)(.*\\/)$/\\1\\2jar:chrome\\/$APP_NAME\\.jar!\\/\\3/g" chrome.manifest
 # Note from Darren: This should work on GNU sed as well as BSD sed.
-  SED_ARGS="-r -i"
-  [[ "$(uname -s)" =~ (Darwin|.*BSD) ]] && SED_ARGS="-E -i ''"
-  sed $SED_ARGS "s/^([[:space:]]*content[[:space:]]+)[^[:space:]]+([[:space:]]+jar:chrome\/)[^\.]+(\.jar.*)/\1${APP_NAME}\2${APP_NAME}\3/" chrome.manifest
-  sed $SED_ARGS "s/^([[:space:]]*override[[:space:]]+[^[:space:]]+[[:space:]]+chrome:\/\/)[^\/]+(\/.*)/\1${APP_NAME}\2/g" chrome.manifest
+  SED_ARGS=("-r" "-i")
+  [[ "$(uname -s)" =~ (Darwin|.*BSD) ]] && SED_ARGS=("-E" "-i" "''")
+  sed "${SED_ARGS[@]}" "s/^([[:space:]]*content[[:space:]]+)[^[:space:]]+([[:space:]]+jar:chrome\/)[^\.]+(\.jar.*)/\1${APP_NAME}\2${APP_NAME}\3/" chrome.manifest
+  sed "${SED_ARGS[@]}" "s/^([[:space:]]*override[[:space:]]+[^[:space:]]+[[:space:]]+chrome:\/\/)[^\/]+(\/.*)/\1${APP_NAME}\2/g" chrome.manifest
   # I didn't re-write the (skin|locale) regex as it wasn't used in the chrome.manifest file.  Should be easy enough to figure it out though :)
-  if [ -e "chrome.manifest''" ]; then
-    rm "chrome.manifest''"
-  fi
 fi
 
 # generate the XPI file
@@ -138,7 +135,7 @@ else
 fi
 
 # remove the working files
-#rm -rf $TMP_DIR
+rm -rf $TMP_DIR
 echo "Done!"
 
 $AFTER_BUILD
